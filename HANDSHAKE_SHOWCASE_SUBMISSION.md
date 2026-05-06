@@ -8,11 +8,7 @@ Inbox Operator
 
 ## Project link
 
-Replace this with your public deployed URL.
-
-Example:
-
-`https://your-domain.example`
+`https://inbox-operator.onrender.com`
 
 ## Short description
 
