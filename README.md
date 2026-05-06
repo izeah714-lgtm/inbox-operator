@@ -57,7 +57,7 @@ This repo includes a [Dockerfile](/Users/izeahgagnon/Documents/Codex/2026-05-06-
 1. Push this project to GitHub.
 2. In Render, create a new Web Service from the repo.
 3. Let Render use the included `render.yaml`.
-4. Set the secret env vars in Render:
+4. Deploy first so the app is reachable in demo mode, then set the secret env vars in Render when you are ready to enable live Gmail/Outlook OAuth:
    - `GOOGLE_CLIENT_ID`
    - `GOOGLE_CLIENT_SECRET`
    - `GOOGLE_REDIRECT_URI`

@@ -1,3 +1,6 @@
 .env
 node_modules
 data/state.json
+github_inbox_operator_key
+github_inbox_operator_key.pub
+.github_known_hosts

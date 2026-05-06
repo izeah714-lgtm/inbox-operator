@@ -5,7 +5,7 @@ This app is close to showcase-ready, but a real public launch still needs a few 
 ## Minimum publish path
 
 1. Deploy the app to a public HTTPS URL.
-2. Set production env vars in your hosting dashboard for:
+2. Confirm the deployed app loads in demo mode first, then set production env vars in your hosting dashboard for:
    - `HOST`
    - `PORT`
    - `GOOGLE_CLIENT_ID`
