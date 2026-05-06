@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inbox Operator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Automated email, human control</p>
+          <h1>Inbox Operator</h1>
+          <p class="hero-copy">
+            Connect a mailbox, generate reply drafts, and decide whether each
+            message needs approval or can send itself.
+          </p>
+          <p class="flash" id="flash" data-tone="neutral">
+            Local mode is ready. Save your settings, then sync the inbox.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-label">Tracked messages</span>
+            <strong id="draft-count">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Waiting approval</span>
+            <strong id="approval-count">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Sent replies</span>
+            <strong id="sent-count">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="panel wizard-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Quick start</p>
+              <h2>Setup wizard</h2>
+            </div>
+            <span class="policy-badge" id="wizard-step-label">Step 1 of 4</span>
+          </div>
+
+          <div class="wizard-layout">
+            <aside class="wizard-sidebar">
+              <button class="wizard-step active" id="wizard-step-1" type="button" data-step="1">
+                <span class="wizard-step-number">1</span>
+                <span>
+                  <strong>Choose provider</strong>
+                  <small>Pick demo, Gmail, or Outlook.</small>
+                </span>
+              </button>
+              <button class="wizard-step" id="wizard-step-2" type="button" data-step="2">
+                <span class="wizard-step-number">2</span>
+                <span>
+                  <strong>Configure OAuth</strong>
+                  <small>Match redirect URIs and env vars.</small>
+                </span>
+              </button>
+              <button class="wizard-step" id="wizard-step-3" type="button" data-step="3">
+                <span class="wizard-step-number">3</span>
+                <span>
+                  <strong>Set identity</strong>
+                  <small>Choose sender details and drafting behavior.</small>
+                </span>
+              </button>
+              <button class="wizard-step" id="wizard-step-4" type="button" data-step="4">
+                <span class="wizard-step-number">4</span>
+                <span>
+                  <strong>Connect and sync</strong>
+                  <small>Authorize the provider and load the first queue.</small>
+                </span>
+              </button>
+            </aside>
+
+            <div class="wizard-main">
+              <div class="wizard-provider-grid">
+                <button class="provider-card active" id="provider-card-demo" type="button" data-provider="demo">
+                  <span class="provider-chip">Fastest</span>
+                  <strong>Demo inbox</strong>
+                  <p>Try the queue immediately with sample emails and safe mock replies.</p>
+                </button>
+                <button class="provider-card" id="provider-card-gmail" type="button" data-provider="gmail">
+                  <span class="provider-chip">Google OAuth</span>
+                  <strong>Gmail</strong>
+                  <p>Connect a real Gmail inbox and keep reply drafts in the original thread.</p>
+                </button>
+                <button class="provider-card" id="provider-card-outlook" type="button" data-provider="outlook">
+                  <span class="provider-chip">Microsoft OAuth</span>
+                  <strong>Outlook</strong>
+                  <p>Connect Outlook with Microsoft Graph and review live drafts before send.</p>
+                </button>
+              </div>
+
+              <div class="wizard-card">
+                <p class="wizard-kicker" id="wizard-kicker">Choose your starting point</p>
+                <h3 id="wizard-title">Pick a mailbox provider</h3>
+                <p class="wizard-description" id="wizard-description">
+                  Demo mode is the fastest way to validate the approval experience before wiring up a live inbox.
+                </p>
+                <div class="wizard-env-editor" id="wizard-env-editor" hidden>
+                  <div class="env-grid">
+                    <label class="field env-field env-field-gmail">
+                      <span class="field-label">Google client ID</span>
+                      <input id="env-google-client-id" type="text" placeholder="Paste Google OAuth client ID" />
+                    </label>
+                    <label class="field env-field env-field-gmail">
+                      <span class="field-label">Google client secret</span>
+                      <input id="env-google-client-secret" type="password" placeholder="Paste Google OAuth client secret" />
+                    </label>
+                    <label class="field env-field env-field-outlook">
+                      <span class="field-label">Microsoft client ID</span>
+                      <input id="env-microsoft-client-id" type="text" placeholder="Paste Microsoft OAuth client ID" />
+                    </label>
+                    <label class="field env-field env-field-outlook">
+                      <span class="field-label">Microsoft client secret</span>
+                      <input id="env-microsoft-client-secret" type="password" placeholder="Paste Microsoft OAuth client secret" />
+                    </label>
+                    <label class="field env-field env-field-outlook">
+                      <span class="field-label">Microsoft tenant ID</span>
+                      <input id="env-microsoft-tenant-id" type="text" placeholder="common" />
+                    </label>
+                    <label class="field env-field">
+                      <span class="field-label">API base URL</span>
+                      <input id="env-api-base-url" type="text" readonly />
+                    </label>
+                  </div>
+                  <p class="field-help compact-help" id="wizard-env-status"></p>
+                </div>
+                <ul class="wizard-checklist" id="wizard-checklist"></ul>
+                <div class="wizard-note" id="wizard-note"></div>
+                <div class="actions">
+                  <button id="wizard-back-button" class="ghost-button" type="button">Back</button>
+                  <button id="wizard-helper-button" class="ghost-button" type="button">Copy details</button>
+                  <button id="wizard-action-button" class="secondary-button" type="button">Use this provider</button>
+                  <button id="wizard-next-button" class="primary-button" type="button">Next</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel settings-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Setup</p>
+              <h2>Connection and drafting</h2>
+            </div>
+            <span class="policy-badge" id="active-policy-badge">Manual review</span>
+          </div>
+
+          <div class="settings-grid">
+            <div class="settings-card">
+              <label class="field">
+                <span class="field-label">Mailbox provider</span>
+                <select id="provider-type">
+                  <option value="demo">Demo inbox</option>
+                  <option value="gmail">Gmail</option>
+                  <option value="outlook">Outlook</option>
+                </select>
+              </label>
+              <p class="field-help" id="provider-hint">
+                Demo mode ships with sample inbox messages so you can test the approval flow without live credentials.
+              </p>
+              <label class="field">
+                <span class="field-label">Sender name</span>
+                <input id="user-display-name" type="text" placeholder="Avery" />
+              </label>
+              <label class="field">
+                <span class="field-label">Reply-from email</span>
+                <input id="user-email" type="email" placeholder="avery@example.com" />
+              </label>
+              <div class="oauth-card">
+                <span class="field-label">Gmail OAuth</span>
+                <p class="field-help" id="gmail-status">
+                  OAuth is not configured yet. Add Google client credentials in .env first.
+                </p>
+                <p class="field-help compact-help">
+                  Google scopes: `gmail.readonly`, `gmail.send`
+                </p>
+                <div class="actions inline-actions">
+                  <button id="gmail-connect-button" class="secondary-button" type="button">Connect Gmail</button>
+                  <button id="gmail-disconnect-button" class="ghost-button" type="button">Disconnect Gmail</button>
+                </div>
+              </div>
+              <div class="oauth-card">
+                <span class="field-label">Outlook OAuth</span>
+                <p class="field-help" id="outlook-status">
+                  OAuth is not configured yet. Add Microsoft client credentials in .env first.
+                </p>
+                <p class="field-help compact-help">
+                  Microsoft scopes: `offline_access`, `User.Read`, `Mail.Read`, `Mail.Send`
+                </p>
+                <div class="actions inline-actions">
+                  <button id="outlook-connect-button" class="secondary-button" type="button">Connect Outlook</button>
+                  <button id="outlook-disconnect-button" class="ghost-button" type="button">Disconnect Outlook</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="policy-options">
+                <label class="policy-option">
+                  <input type="radio" name="policy" value="manual" checked />
+                  <span>
+                    <strong>Manual review</strong>
+                    <small>Every draft waits for approval.</small>
+                  </span>
+                </label>
+                <label class="policy-option">
+                  <input type="radio" name="policy" value="smart" />
+                  <span>
+                    <strong>Smart autopilot</strong>
+                    <small>Low-risk drafts can send automatically.</small>
+                  </span>
+                </label>
+                <label class="policy-option">
+                  <input type="radio" name="policy" value="full" />
+                  <span>
+                    <strong>Full autopilot</strong>
+                    <small>New synced drafts can send without approval.</small>
+                  </span>
+                </label>
+              </div>
+
+              <div class="rule-strip">
+                <div class="rule-card">
+                  <span class="rule-title">Always review</span>
+                  <p>Refunds, legal issues, cancellations, complaints, and pricing changes.</p>
+                </div>
+                <div class="rule-card">
+                  <span class="rule-title">Auto-send candidates</span>
+                  <p>Scheduling, confirmations, basic FAQs, and straightforward status updates.</p>
+                </div>
+              </div>
+
+              <div class="ai-card">
+                <label class="field">
+                  <span class="field-label">OpenAI API key</span>
+                  <input id="openai-key" type="password" placeholder="Optional for live AI drafting" />
+                </label>
+                <label class="field">
+                  <span class="field-label">AI model</span>
+                  <input id="openai-model" type="text" placeholder="Optional model name" />
+                </label>
+                <p class="field-help">
+                  If these are blank, the app falls back to built-in template drafting.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="save-settings-button" class="ghost-button">Save settings</button>
+            <button id="sync-button" class="primary-button">Sync inbox</button>
+          </div>
+        </section>
+
+        <section class="workspace">
+          <aside class="panel inbox-panel">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Queue</p>
+                <h2>Approval and autopilot queue</h2>
+              </div>
+            </div>
+            <div class="email-list" id="email-list"></div>
+          </aside>
+
+          <section class="panel detail-panel">
+            <div id="detail-empty" class="empty-state">
+              <p class="section-kicker">Draft studio</p>
+              <h2>No message selected</h2>
+              <p>Select a synced message to inspect its draft, approval status, and send actions.</p>
+            </div>
+
+            <div id="detail-content" hidden>
+              <div class="section-heading">
+                <div>
+                  <p class="section-kicker">Draft studio</p>
+                  <h2>Reply preview</h2>
+                </div>
+                <div class="badge-row">
+                  <span class="risk-badge low" id="risk-badge">Low risk</span>
+                  <span class="pill review" id="draft-status">Needs review</span>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <article class="email-detail">
+                  <div class="detail-block">
+                    <span class="detail-label">From</span>
+                    <p id="email-from"></p>
+                  </div>
+                  <div class="detail-block">
+                    <span class="detail-label">Subject</span>
+                    <p id="email-subject"></p>
+                  </div>
+                  <div class="detail-block">
+                    <span class="detail-label">Provider and time</span>
+                    <p id="email-meta"></p>
+                  </div>
+                  <div class="detail-block">
+                    <span class="detail-label">Incoming email</span>
+                    <p id="email-body"></p>
+                  </div>
+                </article>
+
+                <article class="draft-detail">
+                  <div class="detail-block">
+                    <span class="detail-label">Draft reply</span>
+                    <textarea id="draft-body"></textarea>
+                  </div>
+                  <div class="detail-block notes-block">
+                    <span class="detail-label">Draft notes</span>
+                    <p id="draft-notes"></p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="actions">
+                <button id="save-draft-button" class="ghost-button">Save draft</button>
+                <button id="regenerate-button" class="secondary-button">Regenerate draft</button>
+                <button id="approve-button" class="primary-button">Approve and send</button>
+                <button id="auto-button" class="secondary-button">Send without approval</button>
+                <button id="revise-button" class="ghost-button">Mark for changes</button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel activity-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Audit trail</p>
+              <h2>Activity log</h2>
+            </div>
+          </div>
+          <ul class="activity-list" id="activity-list"></ul>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

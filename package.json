@@ -1,0 +1,24 @@
+{
+  "name": "inbox-operator",
+  "version": "0.1.0",
+  "description": "AI-assisted email automation with approval queues, smart autopilot, and Gmail/Outlook OAuth.",
+  "private": false,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "email",
+    "automation",
+    "ai",
+    "gmail",
+    "outlook",
+    "oauth",
+    "workflow"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check app.js"
+  }
+}
